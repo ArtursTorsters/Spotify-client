@@ -4,3 +4,5 @@ This repository contains my solution to the Spotify Challenge from codingchallen
 Challenge Description
 
 The Spotify Challenge requires implementing the PKCE authentication flow for a Spotify application. This involves generating a random code verifier, deriving a code challenge, redirecting the user to the Spotify authorization page, exchanging the authorization code for an access token, and making authenticated requests to the Spotify API.
+
+For detailed instructions and requirements, refer to the Spotify Challenge on codingchallenges.fyi.
