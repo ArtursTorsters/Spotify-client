@@ -1,4 +1,4 @@
-#Spotify Challenge Implementation with React and TypeScript
+### Spotify Challenge Implementation with React and TypeScript
 
 This repository contains my solution to the Spotify Challenge from codingchallenges.fyi, implemented using React and TypeScript. The challenge involves implementing the Authorization Code Flow with Proof Key for Code Exchange (PKCE) for a Spotify authentication system.
 Challenge Description
