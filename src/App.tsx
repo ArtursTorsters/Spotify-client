@@ -1,13 +1,14 @@
 import React from 'react';
-// import Spotify from '../src/components/Spotify'
-import './App.css';
-import AccessToken from './components/AccessToken';
+import authorize from '../src/components/Authorization';
+import AccessToken from '../src/components/AccessToken';
 
-function App() {
+const App: React.FC = () => {
   return (
-<AccessToken children={undefined} />
-
+    <div>
+      <button onClick={authorize}>Login with Spotify</button>
+      <AccessToken children={undefined} />
+    </div>
   );
-}
+};
 
 export default App;

@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { clientId, redirectUri } from '../components/Authorization';
+import { clientId, redirectUri } from './Authorization';
 
-// Function to exchange the authorization code for an access token
 const getToken = async (code: string): Promise<string | null> => {
-  // Retrieve the code verifier from localStorage
   const codeVerifier = localStorage.getItem('code_verifier');
   if (!codeVerifier) {
     console.error('Code verifier not found in localStorage');
     return null;
   }
 
-  const payload = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      client_id: clientId,
-      grant_type: 'authorization_code',
-      code,
-      redirect_uri: redirectUri,
-      code_verifier: codeVerifier,
-    }),
-  };
+  const payload = new URLSearchParams({
+    client_id: clientId,
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: redirectUri,
+    code_verifier: codeVerifier,
+  });
 
-  const url = 'https://accounts.spotify.com/api/token'
   try {
-    const response = await fetch(url, payload);
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: payload,
+    });
+
     const data = await response.json();
 
     if (data.access_token) {
@@ -42,14 +40,15 @@ const getToken = async (code: string): Promise<string | null> => {
   }
 };
 
+
+
+// access token properties
 interface AccessTokenProps {
   children: React.ReactNode;
 }
-
 const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-
-  // Extract the authorization code from the URL and exchange it for an access token
+  const [userData, setUserData] = useState<any>({}); // storing the json user data in state object
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const authorizationCode = params.get('code');
@@ -64,43 +63,42 @@ const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
     }
   }, []);
 
-  // Function to fetch the user's profile data
-  const fetchUserProfile = async (token: string) => {
-    try {
-      const response = await fetch('https://api.spotify.com/v1/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        console.error('Failed to fetch user profile', response.statusText);
-        return;
-      }
-
-      const data = await response.json();
-      console.log('User Profile:', data);
-    } catch (error) {
-      console.error('Error fetching user profile', error);
-    }
-  };
-
-  // Fetch the user's profile data when accessToken is set
   useEffect(() => {
     if (accessToken) {
-      fetchUserProfile(accessToken);
+      const fetchUserProfile = async () => {
+        try {
+          const response = await fetch('https://api.spotify.com/v1/me', {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setUserData(data); // Store user data in state
+            console.log('User Profile:', data);
+          } else {
+            console.error('Failed to fetch user profile', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error fetching user profile', error);
+        }
+      };
+
+      fetchUserProfile();
     }
   }, [accessToken]);
 
   return (
     <div>
-      {accessToken ? (
-        <p>Access Token acquired. Check console for user profile data.</p>
-      ) : (
-        <p>Loading...</p>
-      )}
+        <div>
+          <h1>Name: {userData.display_name}</h1>
+          <h2>Email: {userData.email}</h2>
+          <h2>Country: {userData.country}</h2>
+          <h2>Subscription: {userData.product}</h2>
+        </div>
     </div>
-  );
-};
+  )
+}
 
-export default AccessToken;
+export default AccessToken
