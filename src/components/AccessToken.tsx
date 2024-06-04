@@ -25,6 +25,7 @@ const getToken = async (code: string): Promise<string | null> => {
       body: payload,
     });
 
+    // get the data response
     const data = await response.json();
 
     if (data.access_token) {
@@ -40,8 +41,6 @@ const getToken = async (code: string): Promise<string | null> => {
   }
 };
 
-
-
 // access token properties
 interface AccessTokenProps {
   children: React.ReactNode;
@@ -49,6 +48,8 @@ interface AccessTokenProps {
 const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<any>({}); // storing the json user data in state object
+  const [playlistData, setPlaylistData] = useState<any>({}); // storing the json user data in state object
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const authorizationCode = params.get('code');
@@ -63,6 +64,35 @@ const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
     }
   }, []);
 
+
+// Playlist
+  useEffect(() => {
+    if (accessToken) {
+      const fetchPlaylist = async () => {
+        try {
+          const response = await fetch('https://api.spotify.com/v1/playlists/5oFGghsdVHDyOARW3ZDXhW', {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setPlaylistData(data); // Store user data in state
+            console.log('PLAYLIST DATA', data);
+          } else {
+            console.error('Failed to fetch user profile', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error fetching user profile', error);
+        }
+      };
+
+      fetchPlaylist();
+    }
+  }, [accessToken]);
+
+  // user Data
   useEffect(() => {
     if (accessToken) {
       const fetchUserProfile = async () => {
@@ -90,14 +120,22 @@ const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
   }, [accessToken]);
 
   return (
+    <div className='black heightVH'>
     <div>
-        <div>
-          <h1>Name: {userData.display_name}</h1>
-          <h2>Email: {userData.email}</h2>
-          <h2>Country: {userData.country}</h2>
-          <h2>Subscription: {userData.product}</h2>
-        </div>
+      <h1 className='white text-center'>Name: {userData.display_name}</h1>
+      <h2 className='white text-center'>Email: {userData.email}</h2>
+      <h2 className='white text-center'>Country: {userData.country}</h2>
+      <h2 className='white text-center'>Subscription: {userData.product}</h2>
+      <p className='white text-center'>Playlist Title: {playlistData.name}</p>
+      <div className='text-center'>
+      {playlistData.images && playlistData.images.length > 0 && (
+        <img src={playlistData.images[0].url} alt={playlistData.name} />
+      )}
+
+      </div>
+     
     </div>
+  </div>
   )
 }
 
