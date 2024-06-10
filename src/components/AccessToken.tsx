@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { clientId, redirectUri } from './Authorization';
 
 const getToken = async (code: string): Promise<string | null> => {
@@ -49,6 +49,9 @@ const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<any>({}); // storing the json user data in state object
   const [playlistData, setPlaylistData] = useState<any>({}); // storing the json user data in state object
+
+console.log(playlistData);
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -120,22 +123,24 @@ const AccessToken: React.FC<AccessTokenProps> = ({ children }) => {
   }, [accessToken]);
 
   return (
-    <div className='black heightVH'>
-    <div>
-      <h1 className='white text-center'>Name: {userData.display_name}</h1>
-      <h2 className='white text-center'>Email: {userData.email}</h2>
-      <h2 className='white text-center'>Country: {userData.country}</h2>
-      <h2 className='white text-center'>Subscription: {userData.product}</h2>
-      <p className='white text-center'>Playlist Title: {playlistData.name}</p>
-      <div className='text-center'>
-      {playlistData.images && playlistData.images.length > 0 && (
-        <img src={playlistData.images[0].url} alt={playlistData.name} />
-      )}
-
+    <div className="bg-black min-h-50  flex justify-center items-center">
+    <div className="flex flex-col md:flex-row">
+      <div className="p-4">
+        <h1 className="text-white text-left text-xl md:text-2xl font-bold mb-2">Name: {userData.display_name}</h1>
+        <h2 className="text-white text-left text-lg md:text-xl mb-2">Email: {userData.email}</h2>
+        <h2 className="text-white text-left text-lg md:text-xl mb-2">Country: {userData.country}</h2>
+        <h2 className="text-white text-left text-lg md:text-xl mb-2">Subscription: {userData.product}</h2>
+        <p className="text-white text-left text-lg md:text-xl">Playlist Title: {playlistData.name}</p>
       </div>
-     
+  
+      <div className="flex justify-center items-center p-4">
+        {playlistData.images && playlistData.images.length > 0 && (
+          <img src={playlistData.images[1].url} alt={playlistData.name} className=" rounded-full rounded-lg shadow-lg" />
+        )}
+      </div>
     </div>
   </div>
+  
   )
 }
 
