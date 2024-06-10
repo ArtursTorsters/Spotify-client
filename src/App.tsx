@@ -1,19 +1,25 @@
-// App.tsx
-import React from 'react';
-import authorize from '../src/components/Authorization';
-import AccessToken from '../src/components/AccessToken';
-import Player from '../src/components/Player';
+
+
+import React, { useState } from 'react';
+import authorize from './components/Authorization';
+import AccessToken from './components/AccessToken';
+import Player from './components/Player';
 
 const App: React.FC = () => {
-    const token = 'BQAdhaZ_U-AUskste6UfPRGNDxlU0GwX6ezskee4Rzch7ZDxspNQMP5wE2GU8pP4cdEGknj55u6HRQ2frWG05e7CQhn29o7NH8o6nhxiWWPprKXgTof6OsDlMTW5XjMXZtQ5naNyQCG_EY14zeHQ8bjhyUsg1lzQ0JKPsD2hlr0-DuPvMyxQbXrto90G9T74Ptc9wcMa2dA6l52sThYRu5dztsJ9';
+    const playlistUri = '05fG473iIaoy82BF1aGhL8'; // playlist uri  Slipknot
+    const token = 'BQBemeVKu_brAdUDlCVzvYXnPAhOLHpSkKqKkACDTHEX7sxkjrPTO3ZrqO0M3WMc2Ya3b0B9j8IR7EHi6MXo3kFdLxG9QucH4Y1so-HSV4MVJ_Y4JshSWxIVpatZ9w__waPqNMzpi_bNuMzHOPw6IVswAX1aHouR0XnVPthDk5erkbp1QJrDHX-PI6zokDa2Qu7zGHzYS4mwv3JG76wzurpVNVi_';
+
+    const handleLogin = () => {
+        authorize();
+    };
 
     return (
         <div className="black min-h-screen">
             <div className='flex'>
-                <button className='spot-btn' onClick={authorize}>Login with Spotify</button>
+                <button className='spot-btn' onClick={handleLogin}>Login with Spotify</button>
             </div>
-            <AccessToken children={undefined} />
-            <Player token={token} />
+            <AccessToken  />
+            <Player  token={token} playlistUri={playlistUri} />
         </div>
     );
 };
